@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingProviderTestData.Un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingProviderTestData.IntegrationTests", "TrainingProviderTestData.IntegrationTests\TrainingProviderTestData.IntegrationTests.csproj", "{0FDB5044-4F5A-4C69-A8B6-8756361C377E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingProviderTestData.Application", "TrainingProviderTestData.Application\TrainingProviderTestData.Application.csproj", "{B43F296C-5011-49BD-BB17-D43C423B2E4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{0FDB5044-4F5A-4C69-A8B6-8756361C377E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FDB5044-4F5A-4C69-A8B6-8756361C377E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FDB5044-4F5A-4C69-A8B6-8756361C377E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B43F296C-5011-49BD-BB17-D43C423B2E4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B43F296C-5011-49BD-BB17-D43C423B2E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B43F296C-5011-49BD-BB17-D43C423B2E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B43F296C-5011-49BD-BB17-D43C423B2E4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,9 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="nunit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrainingProviderTestData.Application\TrainingProviderTestData.Application.csproj" />
   </ItemGroup>
 
 </Project>
