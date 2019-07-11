@@ -11,18 +11,18 @@ namespace TrainingProviderTestData.Application
     using Interfaces;
     using TrainingProviderTestData.Application.Models;
 
-    public class CharityDataImporter : ICharityDataImporter
+    public class CompaniesHouseDataImporter : ICompaniesHouseDataImporter
     {
         private readonly ITestDataRepository _testDataRepository;
 
-        public CharityDataImporter(ITestDataRepository testDataRepository)
+        public CompaniesHouseDataImporter(ITestDataRepository testDataRepository)
         {
             _testDataRepository = testDataRepository;
         }
 
-        public async Task<bool> ImportCharityData(StreamReader streamReader)
+        public async Task<bool> ImportCompaniesHouseData(StreamReader streamReader)
         {
-            var entries = new List<CharityDataEntry>();
+            var entries = new List<CompaniesHouseDataEntry>();
 
             using (var csvReader = new CsvReader(streamReader))
             {
@@ -31,10 +31,10 @@ namespace TrainingProviderTestData.Application
                 {
                     try
                     {
-                        var record = csvReader.GetRecord<CharityDataEntry>();
+                        var record = csvReader.GetRecord<CompaniesHouseDataEntry>();
 
                         if (record != null)
-                        {
+                        { 
                             entries.Add(record);
                         }
                     }
@@ -53,11 +53,11 @@ namespace TrainingProviderTestData.Application
 
             if (entries.Any())
             {
-                await _testDataRepository.DeleteCharityData();
+                await _testDataRepository.DeleteCompaniesHouseData();
 
                 foreach (var entry in entries)
                 {
-                   bool success = await _testDataRepository.ImportCharityData(entry);
+                   bool success = await _testDataRepository.ImportCompaniesHouseData(entry);
                    if (!success)
                    {
                         // log

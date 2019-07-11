@@ -60,5 +60,60 @@ namespace TrainingProviderTestData.Application.Repositories
 
             var recordCreated = await _connection.ExecuteAsync(sql);
         }
+
+        public async Task<bool> ImportCompaniesHouseData(CompaniesHouseDataEntry companyData)
+        {
+            string sql = $"INSERT INTO [dbo].[CompaniesHouseData] " +
+                         "([CompanyName] " +
+                         ",[CompanyNumber] " +
+                         ",[IncorporationDate]" +
+                         ",[DissolutionDate]" +
+                         ",[CompanyCategory]" +
+                         ",[CompanyStatus]) " +
+                         "VALUES " +
+                         "(@companyName, @companyNumber, @incorporationDate, @dissolutionDate, @companyCategory, @companyStatus)";
+
+            if (!IsValidIncorporationDate(companyData.IncorporationDate))
+            {
+                // log
+                companyData.IncorporationDate = null;
+            }
+
+            var recordCreated = await _connection.ExecuteAsync(sql,
+                new
+                {
+                    companyData.CompanyName,
+                    companyData.CompanyNumber,
+                    companyData.IncorporationDate,
+                    companyData.DissolutionDate,
+                    companyData.CompanyCategory,
+                    companyData.CompanyStatus
+                });
+            var success = await Task.FromResult(recordCreated > 0);
+
+            return await Task.FromResult(success);
+        }
+
+        public async Task DeleteCompaniesHouseData()
+        {
+            string sql = "DELETE FROM [dbo].[CompaniesHouseData] ";
+
+            var recordCreated = await _connection.ExecuteAsync(sql);
+        }
+
+        private bool IsValidIncorporationDate(DateTime? incorporationDate)
+        {
+            if (!incorporationDate.HasValue)
+            {
+                return true;
+            }
+
+            if (incorporationDate.Value.Year < 1753 || incorporationDate.Value.Year > 9999)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

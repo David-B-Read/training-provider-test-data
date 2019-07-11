@@ -8,5 +8,7 @@ namespace TrainingProviderTestData.Application.Interfaces
     {
         Task<bool> ImportCharityData(CharityDataEntry charityData);
         Task DeleteCharityData();
+        Task<bool> ImportCompaniesHouseData(CompaniesHouseDataEntry companyData);
+        Task DeleteCompaniesHouseData();
     }
 }
