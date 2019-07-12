@@ -6,5 +6,6 @@
 	[TradingName] VARCHAR(4000),
 	[PrimaryVerificationSource] VARCHAR(255),
 	[CompanyNumber] VARCHAR(255),
-	[CharityNumber] VARCHAR(255)
+	[CharityNumber] VARCHAR(255), 
+    [Status] VARCHAR(255) NULL
 )

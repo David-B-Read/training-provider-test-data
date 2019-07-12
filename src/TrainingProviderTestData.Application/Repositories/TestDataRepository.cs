@@ -101,6 +101,42 @@ namespace TrainingProviderTestData.Application.Repositories
             var recordCreated = await _connection.ExecuteAsync(sql);
         }
 
+        public async Task<bool> ImportUkrlpData(UkrlpDataEntry ukrlpData)
+        {
+            string sql = $"INSERT INTO [dbo].[UkrlpData] " +
+                         "([UKPRN], " +
+                         "[LegalName], " +
+                         "[TradingName], " +
+                         "[PrimaryVerificationSource], " +
+                         "[CompanyNumber], " +
+                         "[CharityNumber], " +
+                         "[Status]) " +
+                         "VALUES " +
+                         "(@ukprn, @legalName, @tradingName, @primaryVerificationSource, @companyNumber, @charityNumber, @status)";
+
+            var recordCreated = await _connection.ExecuteAsync(sql,
+                new
+                {
+                    ukrlpData.UKPRN,
+                    ukrlpData.LegalName,
+                    ukrlpData.TradingName,
+                    ukrlpData.PrimaryVerificationSource,
+                    ukrlpData.CompanyNumber,
+                    ukrlpData.CharityNumber,
+                    ukrlpData.Status
+                });
+            var success = await Task.FromResult(recordCreated > 0);
+
+            return await Task.FromResult(success);
+        }
+
+        public async Task DeleteUkrlpData()
+        {
+            string sql = "DELETE FROM [dbo].[UkrlpData] ";
+
+            var recordCreated = await _connection.ExecuteAsync(sql);
+        }
+        
         private bool IsValidIncorporationDate(DateTime? incorporationDate)
         {
             if (!incorporationDate.HasValue)

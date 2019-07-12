@@ -10,5 +10,7 @@ namespace TrainingProviderTestData.Application.Interfaces
         Task DeleteCharityData();
         Task<bool> ImportCompaniesHouseData(CompaniesHouseDataEntry companyData);
         Task DeleteCompaniesHouseData();
+        Task<bool> ImportUkrlpData(UkrlpDataEntry ukrlpData);
+        Task DeleteUkrlpData();
     }
 }
