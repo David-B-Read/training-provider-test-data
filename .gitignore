@@ -328,3 +328,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Live data - do not commit to repo
+src/TrainingProviderTestData.IntegrationTests/TestData/CompaniesHouse.csv
+src/TrainingProviderTestData.IntegrationTests/TestData/charities.csv
+src/TrainingProviderTestData.IntegrationTests/TestData/UKRLP.xlsx
