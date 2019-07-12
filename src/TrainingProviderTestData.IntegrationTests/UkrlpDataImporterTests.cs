@@ -23,7 +23,7 @@ namespace TrainingProviderTestData.IntegrationTests
         [Test]
         public void Import_succeeds_for_valid_file()
         {
-            var fileName = $"{_testDataLocation}UKRLP Stakeholder Comprehensive Report v1.9_20190708.xlsx";
+            var fileName = $"{_testDataLocation}UKRLP.xlsx";
 
             var reader = GetTestDataStreamReader(fileName);
 
