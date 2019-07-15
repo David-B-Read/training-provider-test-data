@@ -65,6 +65,8 @@
     <Build Include="StoredProcedures\rpt_ProvidersWithCompanyNumbers.sql" />
     <Build Include="StoredProcedures\rpt_ProvidersWithCharityNumbers.sql" />
     <Build Include="StoredProcedures\rpt_ProvidersWithCompanyAndCharityNumbers.sql" />
+    <Build Include="StoredProcedures\rpt_ProvidersWithInactiveCharity.sql" />
+    <Build Include="StoredProcedures\rpt_ProvidersWithInactiveCompany.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CompaniesHouseData.sql" />
