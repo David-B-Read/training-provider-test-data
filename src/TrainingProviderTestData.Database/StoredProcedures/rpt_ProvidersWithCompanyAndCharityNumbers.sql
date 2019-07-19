@@ -5,6 +5,7 @@ AS
 	ukrlp.LegalName,
 	ukrlp.TradingName,
 	ukrlp.CompanyNumber,
+	ukrlp.CharityNumber,
 	ukrlp.PrimaryVerificationSource,
 	ukrlp.[Status] AS [UKRLP Status],
 	chdata.IncorporationDate AS [Companies House Incorporation Date],
