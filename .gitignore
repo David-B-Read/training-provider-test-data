@@ -330,6 +330,9 @@ ASALocalRun/
 .mfractor/
 
 # Live data - do not commit to repo
-src/TrainingProviderTestData.IntegrationTests/TestData/CompaniesHouse.csv
-src/TrainingProviderTestData.IntegrationTests/TestData/charities.csv
-src/TrainingProviderTestData.IntegrationTests/TestData/UKRLP.xlsx
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/CompaniesHouse.csv
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/CompaniesHouse-test.csv
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/charities.csv
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/charities-test.csv
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/UKRLP.xlsx
+src/TrainingProviderTestData.Application.IntegrationTests/TestData/UKRLP-test.xlsx
