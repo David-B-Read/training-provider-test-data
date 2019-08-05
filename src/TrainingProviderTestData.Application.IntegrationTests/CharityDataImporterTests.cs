@@ -3,11 +3,13 @@ namespace TrainingProviderTestData.IntegrationTests
 {
     using System.IO;
     using NUnit.Framework;
-    using System.Reflection;
     using Application.Configuration;
     using Application.Repositories;
-    using TrainingProviderTestData.Application;
+    using ExcelDataReader.Log;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
+    using Moq;
+    using NUnit.Framework.Internal;
     using TrainingProviderTestData.Application.Importers;
 
     [TestFixture]
@@ -15,11 +17,17 @@ namespace TrainingProviderTestData.IntegrationTests
     {
         private string _testDataLocation;
         private string _connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=TrainingProviderData;Integrated Security=True;MultipleActiveResultSets=True;";
+        private Mock<ILogger<CharityDataImporter>> _importLogger;
+        private Mock<ILogger<TestDataRepository>> _repoLogger;
+        private ApplicationConfiguration _config;
 
         [OneTimeSetUp]
         public void Before_all_tests()
         {
             _testDataLocation = $"{Directory.GetCurrentDirectory()}..\\..\\..\\..\\TestData\\";
+            _importLogger = new Mock<ILogger<CharityDataImporter>>();
+            _repoLogger = new Mock<ILogger<TestDataRepository>>();
+            _config = new ApplicationConfiguration { ConnectionString = _connectionString };
         }
         
         [Test]
@@ -29,7 +37,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CharityDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString}));
+            var importer = new CharityDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCharityData(reader).GetAwaiter().GetResult();
 
@@ -43,7 +51,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CharityDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString }));
+            var importer = new CharityDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCharityData(reader).GetAwaiter().GetResult();
 
@@ -57,7 +65,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CharityDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString }));
+            var importer = new CharityDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCharityData(reader).GetAwaiter().GetResult();
 

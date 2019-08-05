@@ -9,15 +9,18 @@ namespace TrainingProviderTestData.Application.Importers
     using System.Text;
     using ExcelDataReader;
     using Interfaces;
+    using Microsoft.Extensions.Logging;
     using Models;
 
     public class UkrlpDataImporter : IUkrlpDataImporter
     {
         private readonly ITestDataRepository _testDataRepository;
+        private readonly ILogger<UkrlpDataImporter> _logger;
 
-        public UkrlpDataImporter(ITestDataRepository testDataRepository)
+        public UkrlpDataImporter(ITestDataRepository testDataRepository, ILogger<UkrlpDataImporter> logger)
         {
             _testDataRepository = testDataRepository;
+            _logger = logger;
         }
 
         public async Task<bool> ImportUkrlpData(StreamReader streamReader)
@@ -56,10 +59,9 @@ namespace TrainingProviderTestData.Application.Importers
                         entries.Add(entry);
                     }
                 }
-                catch (NullReferenceException)
+                catch (NullReferenceException nullReferenceException)
                 {
-                    // log
-
+                    _logger.LogError("Unable to retrieve UKRLP data from the imported spreadsheet file", nullReferenceException);
                     return await Task.FromResult(false);
                 }
 
@@ -72,12 +74,16 @@ namespace TrainingProviderTestData.Application.Importers
                         bool success = await _testDataRepository.ImportUkrlpData(entry);
                         if (!success)
                         {
-                            // log
+                            _logger.LogError("Unable to import UKRLP data into database");
                             return await Task.FromResult(false);
                         }
                     }
 
                     return await Task.FromResult(true);
+                }
+                else
+                {
+                    _logger.LogWarning("No entries found in UKRLP data");
                 }
 
                 return await Task.FromResult(false);

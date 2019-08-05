@@ -5,8 +5,9 @@ namespace TrainingProviderTestData.IntegrationTests
     using NUnit.Framework;
     using Application.Configuration;
     using Application.Repositories;
-    using TrainingProviderTestData.Application;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
+    using Moq;
     using TrainingProviderTestData.Application.Importers;
 
     [TestFixture]
@@ -14,11 +15,17 @@ namespace TrainingProviderTestData.IntegrationTests
     {
         private string _testDataLocation;
         private string _connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=TrainingProviderData;Integrated Security=True;MultipleActiveResultSets=True;";
+        private Mock<ILogger<CompaniesHouseDataImporter>> _importLogger;
+        private Mock<ILogger<TestDataRepository>> _repoLogger;
+        private ApplicationConfiguration _config;
 
         [OneTimeSetUp]
         public void Before_all_tests()
         {
             _testDataLocation = $"{Directory.GetCurrentDirectory()}..\\..\\..\\..\\TestData\\";
+            _importLogger = new Mock<ILogger<CompaniesHouseDataImporter>>();
+            _repoLogger = new Mock<ILogger<TestDataRepository>>();
+            _config = new ApplicationConfiguration{ ConnectionString = _connectionString };
         }
         
         [Test]
@@ -28,7 +35,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString}));
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
 
@@ -42,7 +49,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString }));
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
 
@@ -56,7 +63,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(new ApplicationConfiguration { ConnectionString = _connectionString }));
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
 

@@ -8,16 +8,19 @@ namespace TrainingProviderTestData.Application.Repositories
     using Configuration;
     using Dapper;
     using Interfaces;
+    using Microsoft.Extensions.Logging;
     using Models;
 
     public class TestDataRepository : ITestDataRepository, IDisposable
     {
         private readonly IApplicationConfiguration _configuration;
         private readonly SqlConnection _connection;
+        private readonly ILogger<TestDataRepository> _logger;
 
-        public TestDataRepository(IApplicationConfiguration configuration)
+        public TestDataRepository(IApplicationConfiguration configuration, ILogger<TestDataRepository> logger)
         {
             _configuration = configuration;
+            _logger = logger;
             var connectionString = _configuration.ConnectionString;
             _connection = new SqlConnection(connectionString);
 
@@ -75,7 +78,7 @@ namespace TrainingProviderTestData.Application.Repositories
 
             if (!IsValidIncorporationDate(companyData.IncorporationDate))
             {
-                // log
+                _logger.LogWarning($"Invalid incorporation date for company {companyData.CompanyNumber} : {companyData.IncorporationDate}");
                 companyData.IncorporationDate = null;
             }
 

@@ -9,15 +9,18 @@ namespace TrainingProviderTestData.Application.Importers
     using CsvHelper;
     using CsvHelper.TypeConversion;
     using Interfaces;
+    using Microsoft.Extensions.Logging;
     using TrainingProviderTestData.Application.Models;
 
     public class CompaniesHouseDataImporter : ICompaniesHouseDataImporter
     {
         private readonly ITestDataRepository _testDataRepository;
+        private readonly ILogger<CompaniesHouseDataImporter> _logger;
 
-        public CompaniesHouseDataImporter(ITestDataRepository testDataRepository)
+        public CompaniesHouseDataImporter(ITestDataRepository testDataRepository, ILogger<CompaniesHouseDataImporter> logger)
         {
             _testDataRepository = testDataRepository;
+            _logger = logger;
         }
 
         public async Task<bool> ImportCompaniesHouseData(StreamReader streamReader)
@@ -40,12 +43,12 @@ namespace TrainingProviderTestData.Application.Importers
                     }
                     catch (TypeConverterException typeConverterException)
                     {
-                        // log
+                        _logger.LogError("Unable to load companies house data due to type conversion error", typeConverterException);
                         return await Task.FromResult(false);
                     }
                     catch (HeaderValidationException headerValidationException)
                     {
-                        // log
+                        _logger.LogError("Unable to load companies house data due to header validation error", headerValidationException);
                         return await Task.FromResult(false);
                     }
                 }
@@ -60,12 +63,16 @@ namespace TrainingProviderTestData.Application.Importers
                    bool success = await _testDataRepository.ImportCompaniesHouseData(entry);
                    if (!success)
                    {
-                        // log
+                       _logger.LogError("Unable to import companies house data into database");
                         return await Task.FromResult(false);
                     }
                 }
 
                 return await Task.FromResult(true);
+            }
+            else
+            {
+                _logger.LogWarning("No entries found in companies house data");
             }
 
             return await Task.FromResult(false);

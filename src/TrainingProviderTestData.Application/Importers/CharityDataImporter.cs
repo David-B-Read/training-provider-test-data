@@ -9,15 +9,18 @@ namespace TrainingProviderTestData.Application.Importers
     using CsvHelper;
     using CsvHelper.TypeConversion;
     using Interfaces;
+    using Microsoft.Extensions.Logging;
     using TrainingProviderTestData.Application.Models;
 
     public class CharityDataImporter : ICharityDataImporter
     {
         private readonly ITestDataRepository _testDataRepository;
+        private readonly ILogger<CharityDataImporter> _logger;
 
-        public CharityDataImporter(ITestDataRepository testDataRepository)
+        public CharityDataImporter(ITestDataRepository testDataRepository, ILogger<CharityDataImporter> logger)
         {
             _testDataRepository = testDataRepository;
+            _logger = logger;
         }
 
         public async Task<bool> ImportCharityData(StreamReader streamReader)
@@ -40,12 +43,12 @@ namespace TrainingProviderTestData.Application.Importers
                     }
                     catch (TypeConverterException typeConverterException)
                     {
-                        // log
+                        _logger.LogError("Unable to load charity commission data due to type conversion error", typeConverterException);
                         return await Task.FromResult(false);
                     }
                     catch (HeaderValidationException headerValidationException)
                     {
-                        // log
+                        _logger.LogError("Unable to load charity commission data due to header validation error", headerValidationException);
                         return await Task.FromResult(false);
                     }
                 }
@@ -60,14 +63,18 @@ namespace TrainingProviderTestData.Application.Importers
                    bool success = await _testDataRepository.ImportCharityData(entry);
                    if (!success)
                    {
-                        // log
+                        _logger.LogError("Unable to import charity commission data into database");
                         return await Task.FromResult(false);
                     }
                 }
 
                 return await Task.FromResult(true);
             }
-
+            else
+            {
+                _logger.LogWarning("No entries found in charity commission data");
+            }
+            
             return await Task.FromResult(false);
         }
     }
