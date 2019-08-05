@@ -9,7 +9,8 @@ namespace TrainingProviderTestData.Application.Configuration
         {
             return new ApplicationConfiguration
             {
-                ConnectionString = configuration["ConnectionString"]
+                ConnectionString = configuration["ConnectionString"],
+                ApiBaseAddress = configuration["ApiBaseAddress"]
             };
         }
     }

@@ -58,7 +58,7 @@ namespace TrainingProviderTestData.Application.Repositories
         {
             string sql = "DELETE FROM [dbo].[CharityCommissionData] "; 
 
-            var recordCreated = await _connection.ExecuteAsync(sql);
+            var result = await _connection.ExecuteAsync(sql);
         }
 
         public async Task<bool> ImportCompaniesHouseData(CompaniesHouseDataEntry companyData)
@@ -98,7 +98,7 @@ namespace TrainingProviderTestData.Application.Repositories
         {
             string sql = "DELETE FROM [dbo].[CompaniesHouseData] ";
 
-            var recordCreated = await _connection.ExecuteAsync(sql);
+            var result = await _connection.ExecuteAsync(sql);
         }
 
         public async Task<bool> ImportUkrlpData(UkrlpDataEntry ukrlpData)
@@ -134,7 +134,7 @@ namespace TrainingProviderTestData.Application.Repositories
         {
             string sql = "DELETE FROM [dbo].[UkrlpData] ";
 
-            var recordCreated = await _connection.ExecuteAsync(sql);
+            var result = await _connection.ExecuteAsync(sql);
         }
         
         private bool IsValidIncorporationDate(DateTime? incorporationDate)

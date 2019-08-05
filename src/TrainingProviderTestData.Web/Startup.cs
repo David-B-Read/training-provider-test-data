@@ -1,20 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-
+﻿
 namespace TrainingProviderTestData.Web
 {
+    using System;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using StructureMap;
+    using Application.Configuration;
+    using Application.Interfaces;
+    using Application.Importers;
+    using Application.Repositories;
+
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            return ConfigureIoC(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -25,10 +39,22 @@ namespace TrainingProviderTestData.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            app.UseMvc(routes => { routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}"); });
+        }
+
+        private IServiceProvider ConfigureIoC(IServiceCollection services)
+        {
+            var container = new Container();
+            container.Configure(config =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                config.Populate(services);
+                config.For<IApplicationConfiguration>().Use(x => ConfigurationFactory.GetApplicationConfiguration(Configuration));
+                config.For<ITestDataRepository>().Use<TestDataRepository>();
+                config.For<IUkrlpDataImporter>().Use<UkrlpDataImporter>();
+                config.For<ICompaniesHouseDataImporter>().Use<CompaniesHouseDataImporter>();
+                config.For<ICharityDataImporter>().Use<CharityDataImporter>();
             });
+            return container.GetInstance<IServiceProvider>();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace TrainingProviderTestData.Application
+namespace TrainingProviderTestData.Application.Importers
 {
     using System.Collections.Generic;
     using System.Globalization;

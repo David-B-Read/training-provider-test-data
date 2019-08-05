@@ -8,6 +8,7 @@ namespace TrainingProviderTestData.IntegrationTests
     using Application.Repositories;
     using TrainingProviderTestData.Application;
     using FluentAssertions;
+    using TrainingProviderTestData.Application.Importers;
 
     [TestFixture]
     public class CharityDataImporterTests

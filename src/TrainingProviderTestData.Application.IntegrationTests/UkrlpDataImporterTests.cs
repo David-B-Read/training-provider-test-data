@@ -7,6 +7,7 @@ namespace TrainingProviderTestData.IntegrationTests
     using TrainingProviderTestData.Application.Repositories;
     using TrainingProviderTestData.Application.Configuration;
     using FluentAssertions;
+    using TrainingProviderTestData.Application.Importers;
 
     [TestFixture]
     public class UkrlpDataImporterTests
