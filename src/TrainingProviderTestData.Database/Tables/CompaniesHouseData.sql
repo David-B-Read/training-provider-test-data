@@ -7,5 +7,7 @@
 	[DissolutionDate] DATETIME NULL,
 	[CompanyCategory] NVARCHAR(255) NULL,
 	[CompanyStatus] NVARCHAR(255) NULL,
-	[CountryOfOrigin] NVARCHAR(255) NULL
+	[CountryOfOrigin] NVARCHAR(255) NULL, 
+    [DirectorsCount] INT NULL, 
+    [PSCsCount] INT NULL
 )
