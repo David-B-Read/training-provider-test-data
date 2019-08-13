@@ -2,8 +2,11 @@
 namespace TrainingProviderTestData.Application.Repositories
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Configuration;
     using Dapper;
@@ -139,7 +142,34 @@ namespace TrainingProviderTestData.Application.Repositories
 
             var result = await _connection.ExecuteAsync(sql);
         }
-        
+
+        public async Task<IEnumerable<string>> GetCompaniesListedInUkrlp()
+        {
+            string sql = $"SELECT [CompanyNumber] " +
+                         "FROM [dbo].[UKRLPData] " +
+                         "Where [Status] = 'Active' " +
+                         "AND PrimaryVerificationSource = 'COMPANY'";
+
+            return await _connection.QueryAsync<string>(sql);
+        }
+
+        public async Task<bool> UpdateCompanyOfficerData(string companyNumber, int directorsCount, int pscCount)
+        {
+            string sql = $"UPDATE [dbo].[CompaniesHouseData] " +
+                         "SET DirectorsCount = @directorsCount, PSCsCount = @pscCount " +
+                         "Where CompanyNumber = @companyNumber";
+
+            var recordUpdated = await _connection.ExecuteAsync(sql,
+                new
+                {
+                    directorsCount,
+                    pscCount,
+                    companyNumber
+                });
+
+            return await Task.FromResult(recordUpdated > 0);
+        }
+
         private bool IsValidIncorporationDate(DateTime? incorporationDate)
         {
             if (!incorporationDate.HasValue)

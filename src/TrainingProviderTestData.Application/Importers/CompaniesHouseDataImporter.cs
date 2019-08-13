@@ -16,11 +16,13 @@ namespace TrainingProviderTestData.Application.Importers
     {
         private readonly ITestDataRepository _testDataRepository;
         private readonly ILogger<CompaniesHouseDataImporter> _logger;
+        private readonly ICompaniesHouseApiClient _client;
 
-        public CompaniesHouseDataImporter(ITestDataRepository testDataRepository, ILogger<CompaniesHouseDataImporter> logger)
+        public CompaniesHouseDataImporter(ITestDataRepository testDataRepository, ILogger<CompaniesHouseDataImporter> logger, ICompaniesHouseApiClient client)
         {
             _testDataRepository = testDataRepository;
             _logger = logger;
+            _client = client;
         }
 
         public async Task<bool> ImportCompaniesHouseData(StreamReader streamReader)
@@ -76,6 +78,30 @@ namespace TrainingProviderTestData.Application.Importers
             }
 
             return await Task.FromResult(false);
+        }
+
+        public async Task<bool> ImportCompanyOfficerData()
+        {
+            var companyNumbers = await _testDataRepository.GetCompaniesListedInUkrlp();
+
+            if (!companyNumbers.Any())
+            {
+                return await Task.FromResult(false);
+            }
+
+            foreach (var companyNumber in companyNumbers)
+            {
+                var companyDirectors = await _client.GetDirectorCount(companyNumber);
+                var companyPSCs = await _client.GetPersonsSignificantControlCount(companyNumber);
+
+                var result = await _testDataRepository.UpdateCompanyOfficerData(companyNumber, companyDirectors, companyPSCs);
+                if (!result)
+                {
+                    return await Task.FromResult(false);
+                }
+            }
+
+            return await Task.FromResult(true);
         }
     }
 }

@@ -21,8 +21,5 @@ namespace TrainingProviderTestData.Application.Models
 
         public string CountryOfOrigin { get; set; }
 
-        public int DirectorsCount { get; set; }
-
-        public int PersonsSignificantControlCount { get; set; }
     }
 }

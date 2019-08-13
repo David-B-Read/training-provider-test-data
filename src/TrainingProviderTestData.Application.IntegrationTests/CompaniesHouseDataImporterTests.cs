@@ -9,6 +9,8 @@ namespace TrainingProviderTestData.IntegrationTests
     using Microsoft.Extensions.Logging;
     using Moq;
     using TrainingProviderTestData.Application.Importers;
+    using TrainingProviderTestData.Application;
+    using System.Net.Http;
 
     [TestFixture]
     public class CompaniesHouseDataImporterTests
@@ -17,14 +19,22 @@ namespace TrainingProviderTestData.IntegrationTests
         private string _connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=TrainingProviderData;Integrated Security=True;MultipleActiveResultSets=True;";
         private Mock<ILogger<CompaniesHouseDataImporter>> _importLogger;
         private Mock<ILogger<TestDataRepository>> _repoLogger;
+        private CompaniesHouseApiClient _client;
+        private Mock<ILogger<CompaniesHouseApiClient>> _apiClientLogger;
         private ApplicationConfiguration _config;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void Before_all_tests()
         {
             _testDataLocation = $"{Directory.GetCurrentDirectory()}..\\..\\..\\..\\TestData\\";
             _importLogger = new Mock<ILogger<CompaniesHouseDataImporter>>();
             _repoLogger = new Mock<ILogger<TestDataRepository>>();
+            var apiConfig = new ApplicationConfiguration();
+            apiConfig.CompaniesHouseApiBaseAddress = "https://api.companieshouse.gov.uk";
+            // ADD YOUR API KEY HERE - go to https://developer.companieshouse.gov.uk/api/docs/ to set up an account
+            apiConfig.CompaniesHouseApiKey = "";
+            _apiClientLogger = new Mock<ILogger<CompaniesHouseApiClient>>();
+            _client = new CompaniesHouseApiClient(_apiClientLogger.Object, new HttpClient(), apiConfig);
             _config = new ApplicationConfiguration{ ConnectionString = _connectionString };
         }
         
@@ -35,7 +45,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object, _client);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
 
@@ -49,7 +59,7 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object, _client);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
 
@@ -63,9 +73,19 @@ namespace TrainingProviderTestData.IntegrationTests
 
             var reader = GetTestDataStreamReader(fileName);
 
-            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object);
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object, _client);
 
             var result = importer.ImportCompaniesHouseData(reader).GetAwaiter().GetResult();
+
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void Import_updates_officer_info_for_companies_in_ukrlp()
+        {
+            var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object, _client);
+
+            var result = importer.ImportCompanyOfficerData().GetAwaiter().GetResult();
 
             result.Should().BeTrue();
         }
