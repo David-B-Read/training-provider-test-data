@@ -1,6 +1,7 @@
 ﻿
 namespace TrainingProviderTestData.Application.Importers
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -10,6 +11,8 @@ namespace TrainingProviderTestData.Application.Importers
     using CsvHelper.TypeConversion;
     using Interfaces;
     using Microsoft.Extensions.Logging;
+    using Polly;
+    using Polly.Retry;
     using TrainingProviderTestData.Application.Models;
 
     public class CompaniesHouseDataImporter : ICompaniesHouseDataImporter
@@ -17,12 +20,14 @@ namespace TrainingProviderTestData.Application.Importers
         private readonly ITestDataRepository _testDataRepository;
         private readonly ILogger<CompaniesHouseDataImporter> _logger;
         private readonly ICompaniesHouseApiClient _client;
+        private AsyncRetryPolicy _retryPolicy;
 
         public CompaniesHouseDataImporter(ITestDataRepository testDataRepository, ILogger<CompaniesHouseDataImporter> logger, ICompaniesHouseApiClient client)
         {
             _testDataRepository = testDataRepository;
             _logger = logger;
             _client = client;
+            _retryPolicy = SetupRetryPolicy();
         }
 
         public async Task<bool> ImportCompaniesHouseData(StreamReader streamReader)
@@ -91,17 +96,39 @@ namespace TrainingProviderTestData.Application.Importers
 
             foreach (var companyNumber in companyNumbers)
             {
-                var companyDirectors = await _client.GetDirectorCount(companyNumber);
-                var companyPSCs = await _client.GetPersonsSignificantControlCount(companyNumber);
+                var companyDirectors =
+                    await _retryPolicy.ExecuteAsync(context => _client.GetDirectorCount(companyNumber), new Context());
 
-                var result = await _testDataRepository.UpdateCompanyOfficerData(companyNumber, companyDirectors, companyPSCs);
-                if (!result)
-                {
-                    return await Task.FromResult(false);
-                }
+                var companyPSCs = 
+                    await _retryPolicy.ExecuteAsync(context => _client.GetPersonsSignificantControlCount(companyNumber), new Context());
+
+                await _testDataRepository.UpdateCompanyOfficerData(companyNumber, companyDirectors, companyPSCs);               
             }
 
             return await Task.FromResult(true);
+        }
+
+        private AsyncRetryPolicy SetupRetryPolicy()
+        {
+            // Companies House API maximum request threshold is applied over a 5 minute window
+            return Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(new[]
+                    {
+                        TimeSpan.FromSeconds(10),
+                        TimeSpan.FromSeconds(20),
+                        TimeSpan.FromSeconds(30),
+                        TimeSpan.FromSeconds(30),
+                        TimeSpan.FromSeconds(30),
+                        TimeSpan.FromSeconds(60),
+                        TimeSpan.FromSeconds(60),
+                        TimeSpan.FromSeconds(60)                         
+                    },
+                    (exception, timeSpan, retryCount, context) =>
+                    {
+                        _logger.LogWarning(
+                            $"Error retrieving response from Companies House API. Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
+                    });
         }
     }
 }

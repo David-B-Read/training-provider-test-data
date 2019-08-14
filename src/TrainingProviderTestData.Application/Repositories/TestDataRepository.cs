@@ -153,7 +153,7 @@ namespace TrainingProviderTestData.Application.Repositories
             return await _connection.QueryAsync<string>(sql);
         }
 
-        public async Task<bool> UpdateCompanyOfficerData(string companyNumber, int directorsCount, int pscCount)
+        public async Task UpdateCompanyOfficerData(string companyNumber, int directorsCount, int pscCount)
         {
             string sql = $"UPDATE [dbo].[CompaniesHouseData] " +
                          "SET DirectorsCount = @directorsCount, PSCsCount = @pscCount " +
@@ -166,8 +166,6 @@ namespace TrainingProviderTestData.Application.Repositories
                     pscCount,
                     companyNumber
                 });
-
-            return await Task.FromResult(recordUpdated > 0);
         }
 
         private bool IsValidIncorporationDate(DateTime? incorporationDate)

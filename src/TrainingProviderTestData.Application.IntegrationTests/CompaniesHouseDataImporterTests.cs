@@ -69,6 +69,8 @@ namespace TrainingProviderTestData.IntegrationTests
         [Test]
         public void Import_succeeds_for_valid_file()
         {
+            // This test takes several minutes to run in full, as there are over 4 million records to import
+
             var fileName = $"{_testDataLocation}CompaniesHouse.csv";
 
             var reader = GetTestDataStreamReader(fileName);
@@ -83,6 +85,9 @@ namespace TrainingProviderTestData.IntegrationTests
         [Test]
         public void Import_updates_officer_info_for_companies_in_ukrlp()
         {
+            // This test takes hours to run in full, due to the Companies House API rate limit of 600 requests / 5 mins
+            // There are approx 25000 records in UKRLP to be cross-referenced against Companies House officers data
+
             var importer = new CompaniesHouseDataImporter(new TestDataRepository(_config, _repoLogger.Object), _importLogger.Object, _client);
 
             var result = importer.ImportCompanyOfficerData().GetAwaiter().GetResult();

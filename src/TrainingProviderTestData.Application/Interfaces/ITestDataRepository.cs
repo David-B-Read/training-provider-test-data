@@ -1,7 +1,6 @@
 ﻿
 namespace TrainingProviderTestData.Application.Interfaces
 {
-    using System.Collections;
     using Models;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -15,6 +14,6 @@ namespace TrainingProviderTestData.Application.Interfaces
         Task<bool> ImportUkrlpData(UkrlpDataEntry ukrlpData);
         Task DeleteUkrlpData();
         Task<IEnumerable<string>> GetCompaniesListedInUkrlp();
-        Task<bool> UpdateCompanyOfficerData(string companyNumber, int directorsCount, int pscCount);
+        Task UpdateCompanyOfficerData(string companyNumber, int directorsCount, int pscCount);
     }
 }
