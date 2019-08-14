@@ -70,9 +70,21 @@ namespace TrainingProviderTestData.Application
                 {
                     var officerData = JsonConvert.DeserializeObject<OfficerList>(jsonData);
 
-                    var activeDirectors = officerData.items.Where(x => x.officer_role?.ToLower() == "director" && !x.resigned_on.HasValue).Count();
+                    if (officerData == null || officerData.items == null)
+                    {
+                        return  await Task.FromResult<int>(0);
+                    }
 
-                    return await Task.FromResult<int>(activeDirectors);
+                    var activeDirectors = officerData.items.Where(x =>
+                        x.officer_role?.ToLower() == "director" && !x.resigned_on.HasValue);
+
+                    var directorCount = 0;
+                    if (activeDirectors != null)
+                    {
+                        directorCount = activeDirectors.Count();
+                    }
+
+                    return await Task.FromResult<int>(directorCount);
                 }
 
                 return await Task.FromResult<int>(0);
